@@ -1,3 +1,4 @@
+from collections import defaultdict
 def get_ngram_features(words, i):
     result = []
     n = len(words)
@@ -69,7 +70,7 @@ def get_ngram_features(words, i):
 
 words = ["the", "happy", "cat"]
 i = 0
-print(get_ngram_features(words, i))
+#print(get_ngram_features(words, i))
 
 
 def get_word_features(word):
@@ -114,7 +115,7 @@ def get_word_features(word):
     return result
 
 
-print(get_word_features("UTDallas"))
+#print(get_word_features("UTDallas"))
 
 
 def get_features(words, i, prevtag):
@@ -127,3 +128,34 @@ def get_features(words, i, prevtag):
 
 
 print(get_features(["UTDallas"], 0, "prevtag"))
+
+corpus_features = []
+corpus_features.append(get_features(
+    ["UTDallas"], 0, "prevtag").append('nextskip-</s>'))
+def remove_rare_features(corpus_features, threshold=5):
+    featureDict = defaultdict(int)
+    for sentences in corpus_features:
+        for features in sentences:
+            temp = features.split("-")
+            print(temp[0])
+            featureDict[temp[0]] += 1
+    commonSet = set()
+    rareSet = set()
+    for features in featureDict.keys():
+        if featureDict[features] < threshold:
+            rareSet.add(features)
+        else:
+            commonSet.add(features)
+    common_features = []
+    for sentences in corpus_features:
+        fList = []
+        for features in sentences:
+            temp = features.split("-")
+            if temp[0] in commonSet:
+                fList.append(features)
+        common_features.append(fList)
+    result = (corpus_features, common_features)
+    return result
+
+
+print(remove_rare_features(corpus_features,2))

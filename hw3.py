@@ -5,6 +5,7 @@ from nltk.corpus import brown
 import numpy
 from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
+from collections import defaultdict
 # Load the Brown corpus with Universal Dependencies tags
 # proportion is a float
 # Returns a tuple of lists (sents, tags)
@@ -159,7 +160,30 @@ def get_features(words, i, prevtag):
 # threshold is an int
 # Returns a tuple (corpus_features, common_features)
 def remove_rare_features(corpus_features, threshold=5):
-    pass
+    featureDict = defaultdict(int)
+    for sentences in corpus_features:
+        for features in sentences:
+            temp = features.split("-")
+            print(temp[0])
+            featureDict[temp[0]] += 1
+    commonSet = set()
+    rareSet = set()
+    for features in featureDict.keys():
+        if featureDict[features] < threshold:
+            rareSet.add(features)
+        else:
+            commonSet.add(features)
+    common_features = []
+    for sentences in corpus_features:
+        fList = []
+        for features in sentences:
+            temp = features.split("-")
+            if temp[0] in commonSet:
+                fList.append(features)
+        common_features.append(fList)
+    result = (corpus_features, common_features)
+    return result
+
 
 
 # Build feature and tag dictionaries
