@@ -97,7 +97,49 @@ def get_ngram_features(words, i):
 # word is a string
 # returns a list of strings
 def get_word_features(word):
-    pass
+    result = []
+    result.append("word-"+word)
+    if word[:1].isupper():
+        result.add("capital")
+    if word.isupper():
+        result.append("allcaps")
+    shape = ""
+    for letter in word:
+        if letter.isdigit():
+            shape=shape+"d"
+        else:
+            if letter.isupper():
+                shape = shape+"X"
+            else:
+                shape = shape+"x"
+    result.append("wordshape-"+shape)
+    shortShape = ""
+    visited = []
+    for let in shape:
+        if let not in visited:
+            shortShape += let
+            visited.append(let)
+    result.append("short-wordshape-"+shortShape)
+    if 'd' in visited:
+        result.append("number")
+    if '-' in word:
+        result.append('hyphen')
+    for i in range(1,5):
+        if i <= len(word):
+            result.append("prefix"+str(i)+"-"+word[:i])
+        else:
+            break
+    for i in range(1,5):
+        if len(word)-i>=0:
+            result.append("suffix"+str(i)+"-"+word[-i:])
+        else:
+            break
+    return result
+    
+
+        
+
+
 
 
 # Wrapper function for get_ngram_features and get_word_features
