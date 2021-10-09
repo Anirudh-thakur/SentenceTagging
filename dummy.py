@@ -114,4 +114,16 @@ def get_word_features(word):
     return result
 
 
-print(get_word_features("UTD-allas"))
+print(get_word_features("UTDallas"))
+
+
+def get_features(words, i, prevtag):
+    result = get_ngram_features(words, i)+get_word_features(words[i])
+    result.append("tagbigram-"+prevtag)
+    for i in range(len(result)):
+        if "wordshape-" not in result[i]:
+            result[i] = result[i].lower()
+    return result
+
+
+print(get_features(["UTDallas"], 0, "prevtag"))

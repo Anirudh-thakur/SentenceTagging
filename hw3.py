@@ -116,8 +116,8 @@ def get_word_features(word):
             shape += letter
     result.append("wordshape-"+shape)
     shortShape = shape[0]
-    for i in range(1,len(shape)):
-        if shape[i]!=shape[i-1]:
+    for i in range(1, len(shape)):
+        if shape[i] != shape[i-1]:
             shortShape += shape[i]
 
     result.append("short-wordshape-"+shortShape)
@@ -137,10 +137,6 @@ def get_word_features(word):
             break
     return result
 
-        
-
-
-
 
 # Wrapper function for get_ngram_features and get_word_features
 # words is a list of strings
@@ -148,7 +144,14 @@ def get_word_features(word):
 # prevtag is a string
 # Returns a list of strings
 def get_features(words, i, prevtag):
-    pass
+    result = get_ngram_features(words, i)+get_word_features(words[i])
+    result.append("tagbigram-"+prevtag)
+    for i in range(len(result)):
+        if "wordshape-" not in result[i]:
+            result[i] = result[i].lower()
+    return result
+
+
 
 
 # Remove features that occur fewer than a given threshold number of time
