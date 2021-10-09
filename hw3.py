@@ -161,9 +161,11 @@ def get_features(words, i, prevtag):
 # Returns a tuple (corpus_features, common_features)
 def remove_rare_features(corpus_features, threshold=5):
     featureDict = defaultdict(int)
-    for sentences in corpus_features:
-        for features in sentences:
-            featureDict[features] += 1
+    for i in range(len(corpus_features)):
+        for j in range(len(corpus_features[i])):
+            FeatureList = corpus_features[i][j]
+            for features in FeatureList:
+                featureDict[features] += 1
     commonSet = set()
     rareSet = set()
     for features in featureDict.keys():
@@ -173,14 +175,15 @@ def remove_rare_features(corpus_features, threshold=5):
             commonSet.add(features)
     #print(commonSet)
 
-    common_features = []
-    for sentences in corpus_features:
-        fList = []
-        for features in sentences:
-            if features in commonSet:
-                fList.append(features)
-        common_features.append(fList)
-    result = (common_features, commonSet)
+    for i in range(len(corpus_features)):
+        for j in range(len(corpus_features[i])):
+            FeatureList = corpus_features[i][j]
+            newFeatureList = []
+            for features in FeatureList:
+                if features in commonSet:
+                    newFeatureList.append(features)
+            corpus_features[i][j] = newFeatureList
+    result = (corpus_features, commonSet)
     return result
 
 
