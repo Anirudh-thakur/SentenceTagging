@@ -127,18 +127,20 @@ def get_features(words, i, prevtag):
     return result
 
 test = get_features(["UTDallas"], 0, "prevtag")
-print(test)
-test.append('suffix1-s')
-test.append('suffix1-s')
 corpus_features = []
+print(test)
 corpus_features.append(test)
+test.append('suffix1-s')
+test.append('suffix1-s')
+corpus_features.append(test)
+
+
+
 def remove_rare_features(corpus_features, threshold=5):
     featureDict = defaultdict(int)
     for sentences in corpus_features:
         for features in sentences:
-            temp = features.split("-")
-            print(temp[0])
-            featureDict[temp[0]] += 1
+            featureDict[features] += 1
     commonSet = set()
     rareSet = set()
     for features in featureDict.keys():
@@ -146,18 +148,19 @@ def remove_rare_features(corpus_features, threshold=5):
             rareSet.add(features)
         else:
             commonSet.add(features)
-    print(commonSet)
+    #print(commonSet)
 
     common_features = []
     for sentences in corpus_features:
         fList = []
         for features in sentences:
-            temp = features.split("-")
-            if temp[0] in commonSet:
+            if features in commonSet:
                 fList.append(features)
         common_features.append(fList)
-    result = (common_features,commonSet)
+    result = (common_features, commonSet)
     return result
 
 
-print(remove_rare_features(corpus_features,2))
+result = remove_rare_features(corpus_features,4)
+print(result)
+print(type(result))
