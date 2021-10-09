@@ -89,14 +89,13 @@ def get_word_features(word):
             else:
                 shape = shape+"x"
     result.append("wordshape-"+shape)
-    shortShape = ""
-    visited = []
-    for let in shape:
-        if let not in visited:
-            shortShape += let
-            visited.append(let)
+    shortShape = shape[0]
+    for i in range(1,len(shape)):
+        if shape[i]!=shape[i-1]:
+            shortShape += shape[i]
+
     result.append("short-wordshape-"+shortShape)
-    if 'd' in visited:
+    if 'd' in shortShape:
         result.append("number")
     if '-' in word:
         result.append('hyphen')
@@ -113,4 +112,4 @@ def get_word_features(word):
     return result
 
 
-print(get_word_features("UTDallas"))
+print(get_word_features("U"))

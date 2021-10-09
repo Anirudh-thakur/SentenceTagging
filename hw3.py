@@ -100,42 +100,41 @@ def get_word_features(word):
     result = []
     result.append("word-"+word)
     if word[:1].isupper():
-        result.add("capital")
+        result.append("capital")
     if word.isupper():
         result.append("allcaps")
     shape = ""
     for letter in word:
         if letter.isdigit():
-            shape=shape+"d"
+            shape = shape+"d"
         else:
             if letter.isupper():
                 shape = shape+"X"
             else:
                 shape = shape+"x"
     result.append("wordshape-"+shape)
-    shortShape = ""
-    visited = []
-    for let in shape:
-        if let not in visited:
-            shortShape += let
-            visited.append(let)
+    shortShape = shape[0]
+    for i in range(1,len(shape)):
+        if shape[i]!=shape[i-1]:
+            shortShape += shape[i]
+
     result.append("short-wordshape-"+shortShape)
-    if 'd' in visited:
+    if 'd' in shortShape:
         result.append("number")
     if '-' in word:
         result.append('hyphen')
-    for i in range(1,5):
+    for i in range(1, 5):
         if i <= len(word):
             result.append("prefix"+str(i)+"-"+word[:i])
         else:
             break
-    for i in range(1,5):
-        if len(word)-i>=0:
+    for i in range(1, 5):
+        if len(word)-i >= 0:
             result.append("suffix"+str(i)+"-"+word[-i:])
         else:
             break
     return result
-    
+
 
         
 
