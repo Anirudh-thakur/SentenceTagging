@@ -107,11 +107,13 @@ def get_word_features(word):
     for letter in word:
         if letter.isdigit():
             shape = shape+"d"
-        else:
+        elif letter.isalpha():
             if letter.isupper():
                 shape = shape+"X"
             else:
                 shape = shape+"x"
+        else:
+            shape += letter
     result.append("wordshape-"+shape)
     shortShape = shape[0]
     for i in range(1,len(shape)):
@@ -134,7 +136,6 @@ def get_word_features(word):
         else:
             break
     return result
-
 
         
 
