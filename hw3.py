@@ -164,7 +164,7 @@ def remove_rare_features(corpus_features, threshold=5):
     for sentences in corpus_features:
         for features in sentences:
             temp = features.split("-")
-            print(temp[0])
+            #print(temp[0])
             featureDict[temp[0]] += 1
     commonSet = set()
     rareSet = set()
@@ -173,6 +173,8 @@ def remove_rare_features(corpus_features, threshold=5):
             rareSet.add(features)
         else:
             commonSet.add(features)
+    #print(commonSet)
+
     common_features = []
     for sentences in corpus_features:
         fList = []
@@ -181,7 +183,7 @@ def remove_rare_features(corpus_features, threshold=5):
             if temp[0] in commonSet:
                 fList.append(features)
         common_features.append(fList)
-    result = (corpus_features, common_features)
+    result = (common_features, commonSet)
     return result
 
 
