@@ -193,14 +193,36 @@ def remove_rare_features(corpus_features, threshold=5):
 # corpus_tags is a list of lists of strings (tags)
 # Returns a tuple (feature_dict, tag_dict)
 def get_feature_and_label_dictionaries(common_features, corpus_tags):
-    pass
+    feature_dict = dict()
+    tag_dict = dict()
+    counterTag = 0
+    for i in range(len(corpus_tags)):
+        for j in range(len(corpus_tags[i])):
+            tag = corpus_tags[i][j]
+            if tag not in tag_dict.keys():
+                tag_dict[tag] = counterTag
+                counterTag += 1
+    counterFeature = 0
+    for features in common_features:
+        if features not in feature_dict.keys():
+            feature_dict[features] = counterFeature
+            counterFeature += 1
+    result = (feature_dict,tag_dict)
+    return result
 
 # Build the label vector Y
 # corpus_tags is a list of lists of strings (tags)
 # tag_dict is a dictionary {string: int}
 # Returns a Numpy array
 def build_Y(corpus_tags, tag_dict):
-    pass
+    temp = []
+    for i in range(len(corpus_tags)):
+        for j in range(len(corpus_tags[i])):
+            tag = corpus_tags[i][j]
+            index = tag_dict[tag]
+            temp.append(index)
+    result = numpy.array(temp)
+    return result
 
 # Build a sparse input matrix X
 # corpus_features is a list of lists, where each sublist corresponds to a sentence and has elements that are lists of strings (feature names)
