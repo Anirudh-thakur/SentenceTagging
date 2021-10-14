@@ -240,8 +240,8 @@ def build_X(corpus_features, feature_dict):
     r = numpy.array(rows)
     c = numpy.array(cols)
     v = numpy.array(values)
-    result = csr_matrix(v,(r,c),shape=(len(r),len(c)))
-    return result.toarray()
+    result = csr_matrix(v,(r,c))
+    return result
 
 
 
