@@ -229,7 +229,19 @@ def build_Y(corpus_tags, tag_dict):
 # feature_dict is a dictionary {string: int}
 # Returns a Scipy.sparse csr_matrix
 def build_X(corpus_features, feature_dict):
-    pass
+    rows = []
+    cols = []
+    for sentences in corpus_features:
+        for i,words in enumerate(sentences):
+            for feature in words:
+                rows.append(i)
+                cols.append(feature_dict[feature])
+    values = [1 for _ in range(len(rows))]
+    r = numpy.array(rows)
+    c = numpy.array(cols)
+    v = numpy.array(values)
+    return csr_matrix(v,(r,c),shape=(len(r),len(c)))
+
 
 
 # Train an MEMM tagger on the Brown corpus
