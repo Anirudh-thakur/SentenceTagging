@@ -249,7 +249,26 @@ def build_X(corpus_features, feature_dict):
 # proportion is a float
 # Returns a tuple (model, feature_dict, tag_dict)
 def train(proportion=1.0):
-    pass
+    (corpus_sents, corpus_tags) = load_training_corpus(proportion)
+    corpus_features = []
+    for i,sentence in enumerate(corpus_sents):
+        f_list = []
+        for j,word in enumerate(sentence):
+            if j == 0:
+                f_list.append(get_features(word, j, "<s>"))
+            else:
+                f_list.append(get_features(word,j,corpus_tags[i][j-1]))
+        corpus_features.append(f_list)
+    (corpus_features, commonSet) = remove_rare_features(corpus_features)
+    (feature_dict, tag_dict) = get_feature_and_label_dictionaries(
+        commonSet, corpus_tags)
+    X = build_X(corpus_features,feature_dict)
+    Y = build_Y(corpus_tags,tag_dict)
+    model = LogisticRegression()
+    model.fit(X,Y)
+    return (model,feature_dict,tag_dict)
+
+    
 
 
 
