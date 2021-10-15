@@ -236,11 +236,12 @@ def build_X(corpus_features, feature_dict):
             for feature in words:
                 rows.append(i)
                 cols.append(feature_dict[feature])
-    values = [1 for _ in range(len(rows)+len(cols))]
+
+    values = [1 for _ in range(len(rows))]
     r = numpy.array(rows)
     c = numpy.array(cols)
     v = numpy.array(values)
-    result = csr_matrix((v,r,c))
+    result = csr_matrix((v,(r,c)) , shape=(len(r),len(c)))
     return result
 
 
@@ -250,6 +251,8 @@ def build_X(corpus_features, feature_dict):
 # Returns a tuple (model, feature_dict, tag_dict)
 def train(proportion=1.0):
     (corpus_sents, corpus_tags) = load_training_corpus(proportion)
+    #print(corpus_tags[0]])
+    print(corpus_sents[0])
     corpus_features = []
     for i,sentence in enumerate(corpus_sents):
         f_list = []
@@ -257,14 +260,18 @@ def train(proportion=1.0):
             if j == 0:
                 f_list.append(get_features(word, j, "<s>"))
             else:
-                f_list.append(get_features(word,j,corpus_tags[i][j-1]))
+                print(corpus_tags[i][j-1])
+                
+                f_list.append(get_features(sentence, j, corpus_tags[i][j-1]))
         corpus_features.append(f_list)
     (corpus_features, commonSet) = remove_rare_features(corpus_features)
     (feature_dict, tag_dict) = get_feature_and_label_dictionaries(
         commonSet, corpus_tags)
     X = build_X(corpus_features,feature_dict)
     Y = build_Y(corpus_tags,tag_dict)
-    model = LogisticRegression()
+    print(X.shape)
+    print(Y.shape)
+    model = LogisticRegression(class_weight='balanced' , solver='saga',multi_class='multinomial')
     model.fit(X,Y)
     return (model,feature_dict,tag_dict)
 
