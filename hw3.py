@@ -237,11 +237,11 @@ def build_X(corpus_features, feature_dict):
                 rows.append(i)
                 cols.append(feature_dict[feature])
 
-    values = [1 for _ in range(len(rows))]
+    values = [[1 for _ in range(len(cols))] for _ in range(len(rows))]
     r = numpy.array(rows)
     c = numpy.array(cols)
     v = numpy.array(values)
-    result = csr_matrix((v,r,c))
+    result = csr_matrix((v,(r,c)))
     return result
 
 
