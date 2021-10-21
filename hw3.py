@@ -231,12 +231,14 @@ def build_Y(corpus_tags, tag_dict):
 def build_X(corpus_features, feature_dict):
     rows = []
     cols = []
-    word_index = 0
+    word_index = -1
     for sentences in corpus_features:
         for i,words in enumerate(sentences):
+            word_index+=1
             for feature in words:
-                rows.append(word_index)
-                cols.append(feature_dict[feature])
+                if feature in feature_dict:
+                    rows.append(word_index)
+                    cols.append(feature_dict[feature])
 
     values = [1 for _ in range(len(cols))]
     r = numpy.array(rows)
