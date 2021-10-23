@@ -147,7 +147,7 @@ def get_word_features(word):
 # Returns a list of strings
 def get_features(words, i, prevtag):
     result = get_ngram_features(words, i)+get_word_features(words[i])
-    result.append("tagbigram-"+prevtag)
+    result.append("tagbigram-"+str(prevtag))
     for i in range(len(result)):
         if "wordshape-" not in result[i]:
             result[i] = result[i].lower()
@@ -257,7 +257,7 @@ def build_X(corpus_features, feature_dict):
 def train(proportion=1.0):
     (corpus_sents, corpus_tags) = load_training_corpus(proportion)
     #print(corpus_tags[0]])
-    print(corpus_sents[0])
+    #print(corpus_sents[0])
     corpus_features = []
     for i,sentence in enumerate(corpus_sents):
         f_list = []
@@ -265,7 +265,7 @@ def train(proportion=1.0):
             if j == 0:
                 f_list.append(get_features(word, j, "<s>"))
             else:
-                print(corpus_tags[i][j-1])
+                #print(corpus_tags[i][j-1])
                 
                 f_list.append(get_features(sentence, j, corpus_tags[i][j-1]))
         corpus_features.append(f_list)
@@ -274,8 +274,8 @@ def train(proportion=1.0):
         commonSet, corpus_tags)
     X = build_X(corpus_features,feature_dict)
     Y = build_Y(corpus_tags,tag_dict)
-    print(X.shape)
-    print(Y.shape)
+    #print(X.shape)
+    #print(Y.shape)
     model = LogisticRegression(class_weight='balanced' , solver='saga',multi_class='multinomial')
     model.fit(X,Y)
     return (model,feature_dict,tag_dict)
@@ -306,6 +306,7 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
     for i in range(1,len(test_sent[0])):
         features = []
         for index, tag in reverse_tag_dict.items():
+            #print(tag)
             features += [get_features(test_sent[0],i,tag)]
         X = build_X([features],feature_dict)[0]
         prob = model.predict_log_proba(X)
