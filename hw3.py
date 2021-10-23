@@ -3,6 +3,7 @@ import sys
 import nltk
 from nltk.corpus import brown
 import numpy
+from numpy.core.defchararray import mod
 from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
 from collections import defaultdict
@@ -244,7 +245,8 @@ def build_X(corpus_features, feature_dict):
     r = numpy.array(rows)
     c = numpy.array(cols)
     v = numpy.array(values)
-    result = csr_matrix((v,(r,c)))
+    result = csr_matrix((v, (r, c)))
+    #shape=(word_index+1, len(feature_dict)
     return result
 
 
@@ -298,7 +300,32 @@ def load_test_corpus(corpus_path):
 # reverse_tag_dict is a dictionary {int: string}
 # Returns a tuple (Y_start, Y_pred)
 def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
-    pass
+    n = len(test_sent[0])
+    tagSet = reverse_tag_dict.keys()
+    T = len(tagSet)
+    Y_pred = numpy.empty(n-1,T,T)
+    for i in range(1,len(test_sent[0])):
+        features = []
+        for tag in tagSet:
+            feature = [get_features(test_sent[0],i,tag)]
+            features.append(feature)
+        X = build_X([feature],feature_dict)[0]
+        predict = model.predict_log_proba(X)
+        Y_pred[i-1] = predict
+    features = []
+    feature = [get_features(test_sent[0], 0, "<s>")]
+    features.append(feature)
+    X = build_X([feature], feature_dict)[0]
+    predict = model.predict_log_proba(X)
+    Y_start = predict[0]
+    return (Y_start, Y_pred)
+
+        
+        
+
+
+
+
 
 
 # Perform Viterbi decoding using predicted log probabilities
@@ -316,7 +343,9 @@ def viterbi(Y_start, Y_pred):
 # tag_dict is a dictionary {string: int}
 # Returns a list of lists of strings (tags)
 def predict(corpus_path, model, feature_dict, tag_dict):
-    pass
+    corpus = load_test_corpus(corpus_path)
+    reversed_dictionary = {value: key for (key, value) in tag_dict.items()}
+
 
 
 def main(args):
