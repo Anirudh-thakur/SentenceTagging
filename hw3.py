@@ -312,7 +312,7 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
         prob = model.predict_log_proba(X)
         Y_pred[i-1] = prob
     features = get_features(test_sent[0], 0, "<s>")
-    X = build_X([[feature]], feature_dict)[0]
+    X = build_X([[feature]], feature_dict)
     predict = model.predict_log_proba(X)
     Y_start = predict[0]
     result = (Y_start, Y_pred)
@@ -331,22 +331,23 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
 # Y_pred is a Numpy array of size (n-1, T, T)
 # Returns a list of strings (tags)
 def viterbi(Y_start, Y_pred):
-    n = len(Y_pred)
-    n += 1
+    N = len(Y_pred)
+    N += 1
     T = len(Y_start)
-    vit = numpy.empty([n,T])
-    BP = numpy.empty([n,T]) 
+    vit = numpy.empty([N,T])
+    BP = numpy.empty([N,T]) 
     vit[0] = Y_start
-    for n in range(1,n):
-        X = numpy.empty(T)
+    for n in range(1,N):
         for t in range(T):
+            X = numpy.empty(T)
             for tag in range(T):
-                X[tag] = vit[n-1][tag] + Y_pred[n-1][tag][T]
+                X[tag] = vit[n-1][tag] + Y_pred[n-1][tag][t]
             vit[n][t] = numpy.max(X)
+            BP[n][t] = int(numpy.argmax(X))
     tag_set = []
-    bp_temp = int(numpy.argmax(vit[n-1]))
+    bp_temp = int(numpy.argmax(vit[N-1]))
     for i in range(n):
-        pos = n-i-1
+        pos = N-i-1
         tag_set.append(bp_temp)
         bp_temp = int(BP[pos][bp_temp])
     tag_set.reverse()
