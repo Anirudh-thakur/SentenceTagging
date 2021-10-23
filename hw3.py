@@ -371,7 +371,7 @@ def predict(corpus_path, model, feature_dict, tag_dict):
         Y_pred = result[1]
         temp = viterbi(Y_start,Y_pred)
         tag_list = [reversed_dictionary[x] for x in temp]
-        predictions.append(tag_list)
+        predictions.append([tag_list])
     return predictions
 
 
