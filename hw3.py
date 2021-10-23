@@ -257,6 +257,7 @@ def build_X(corpus_features, feature_dict):
 def train(proportion=1.0):
     (corpus_sents, corpus_tags) = load_training_corpus(proportion)
     #print(corpus_tags[0]])
+    print(corpus_sents[0])
     corpus_features = []
     for i,sentence in enumerate(corpus_sents):
         f_list = []
@@ -264,7 +265,7 @@ def train(proportion=1.0):
             if j == 0:
                 f_list.append(get_features(word, j, "<s>"))
             else:
-                #print(corpus_tags[i][j-1])
+                print(corpus_tags[i][j-1])
                 
                 f_list.append(get_features(sentence, j, corpus_tags[i][j-1]))
         corpus_features.append(f_list)
@@ -273,8 +274,8 @@ def train(proportion=1.0):
         commonSet, corpus_tags)
     X = build_X(corpus_features,feature_dict)
     Y = build_Y(corpus_tags,tag_dict)
-    #print(X.shape)
-    #print(Y.shape)
+    print(X.shape)
+    print(Y.shape)
     model = LogisticRegression(class_weight='balanced' , solver='saga',multi_class='multinomial')
     model.fit(X,Y)
     return (model,feature_dict,tag_dict)
@@ -300,21 +301,18 @@ def load_test_corpus(corpus_path):
 # Returns a tuple (Y_start, Y_pred)
 def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
     n = len(test_sent[0])
-    tagSet = reverse_tag_dict.keys()
-    T = len(tagSet)
+    T = len(reverse_tag_dict)
     Y_pred = numpy.empty([n-1,T,T])
     for i in range(1,len(test_sent[0])):
         features = []
-        for tag in tagSet:
+        for tag in reverse_tag_dict.items():
             feature = [get_features(test_sent[0],i,tag)]
             features.append(feature)
         X = build_X([feature],feature_dict)[0]
-        predict = model.predict_log_proba(X)
-        Y_pred[i-1] = predict
-    features = []
-    feature = [get_features(test_sent[0], 0, "<s>")]
-    features.append(feature)
-    X = build_X([feature], feature_dict)[0]
+        prob = model.predict_log_proba(X)
+        Y_pred[i-1] = prob
+    features = get_features(test_sent[0], 0, "<s>")
+    X = build_X([[feature]], feature_dict)[0]
     predict = model.predict_log_proba(X)
     Y_start = predict[0]
     result = (Y_start, Y_pred)
@@ -351,7 +349,8 @@ def viterbi(Y_start, Y_pred):
         pos = n-i-1
         tag_set.append(bp_temp)
         bp_temp = int(BP[pos][bp_temp])
-    return tag_set.reverse()
+    tag_set.reverse()
+    return tag_set
 
 
 # Predict tags for a test corpus using a trained model
@@ -368,7 +367,6 @@ def predict(corpus_path, model, feature_dict, tag_dict):
         result = get_predictions(sentences,model,feature_dict,reversed_dictionary)
         Y_start = result[0]
         Y_pred = result[1]
-        print(Y_start)
         temp = viterbi(Y_start,Y_pred)
         tag_list = [reversed_dictionary[x] for x in temp]
         predictions.append([tag_list])
