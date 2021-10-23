@@ -305,14 +305,13 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
     Y_pred = numpy.empty([n-1,T,T])
     for i in range(1,len(test_sent[0])):
         features = []
-        for tag in reverse_tag_dict.items():
-            feature = [get_features(test_sent[0],i,tag)]
-            features.append(feature)
-        X = build_X([feature],feature_dict)[0]
+        for index, tag in reverse_tag_dict.items():
+            features += [get_features(test_sent[0],i,tag)]
+        X = build_X([features],feature_dict)[0]
         prob = model.predict_log_proba(X)
         Y_pred[i-1] = prob
     features = get_features(test_sent[0], 0, "<s>")
-    X = build_X([[feature]], feature_dict)
+    X = build_X([[features]], feature_dict)
     predict = model.predict_log_proba(X)
     Y_start = predict[0]
     result = (Y_start, Y_pred)
