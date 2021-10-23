@@ -366,12 +366,11 @@ def predict(corpus_path, model, feature_dict, tag_dict):
     for tag,index in tag_dict.items():
         reversed_dictionary[index] = tag
     for sentences in corpus:
-        result = get_predictions([sentences],model,feature_dict,reversed_dictionary)
-        Y_start = result[0]
-        Y_pred = result[1]
-        temp = viterbi(Y_start,Y_pred)
-        tag_list = [reversed_dictionary[x] for x in temp]
-        predictions.append([tag_list])
+        Y_start, Y_pred = get_predictions([sentences],model,feature_dict,reversed_dictionary)
+        tags = viterbi(Y_start,Y_pred)
+        for i in range(len(tags)):
+            tags[i] = reversed_dictionary[tags[i]]
+        predictions += [tags]
     return predictions
 
 
