@@ -318,7 +318,8 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
     X = build_X([feature], feature_dict)[0]
     predict = model.predict_log_proba(X)
     Y_start = predict[0]
-    return (Y_start, Y_pred)
+    result = (Y_start, Y_pred)
+    return result
 
         
         
