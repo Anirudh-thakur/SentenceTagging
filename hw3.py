@@ -7,6 +7,7 @@ from numpy.core.defchararray import mod
 from scipy.sparse import csr_matrix
 from sklearn.linear_model import LogisticRegression
 from collections import defaultdict
+import pickle
 # Load the Brown corpus with Universal Dependencies tags
 # proportion is a float
 # Returns a tuple of lists (sents, tags)
@@ -245,7 +246,7 @@ def build_X(corpus_features, feature_dict):
     r = numpy.array(rows)
     c = numpy.array(cols)
     v = numpy.array(values)
-    result = csr_matrix((v, (r, c)))
+    result = csr_matrix((v, (r, c)) , shape = (word_index+1 , len(feature_dict)))
     #shape=(word_index+1, len(feature_dict)
     return result
 
