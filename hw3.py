@@ -334,7 +334,25 @@ def get_predictions(test_sent, model, feature_dict, reverse_tag_dict):
 # Y_pred is a Numpy array of size (n-1, T, T)
 # Returns a list of strings (tags)
 def viterbi(Y_start, Y_pred):
-    pass
+    n = len(Y_pred)
+    n += 1
+    T = len(Y_start)
+    vit = numpy.empty(n,T)
+    BP = numpy.empty(n,T) 
+    vit[0] = Y_start
+    for n in range(1,n):
+        X = numpy.empty(T)
+        for t in range(T):
+            for tag in range(T):
+                X[tag] = vit[n-1][tag] + Y_pred[n-1][tag][T]
+            vit[n][t] = numpy.max(X)
+    tag_set = []
+    bp_temp = int(numpy.argmax(vit[n-1]))
+    for i in range(n):
+        pos = n-i-1
+        tag_set.append(bp_temp)
+        bp_temp = int(BP[pos][bp_temp])
+    return tag_set.reverse()
 
 
 # Predict tags for a test corpus using a trained model
@@ -346,6 +364,15 @@ def viterbi(Y_start, Y_pred):
 def predict(corpus_path, model, feature_dict, tag_dict):
     corpus = load_test_corpus(corpus_path)
     reversed_dictionary = {value: key for (key, value) in tag_dict.items()}
+    predictions = []
+    for sentences in corpus:
+        result = get_predictions(sentences,model,feature_dict,reversed_dictionary)
+        Y_start = result[0]
+        Y_pred = result[1]
+        temp = viterbi(Y_start,Y_pred)
+        tag_list = [reversed_dictionary[x] for x in temp]
+        predictions.append(tag_list)
+    return predictions
 
 
 
