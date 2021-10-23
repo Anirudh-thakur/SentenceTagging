@@ -337,16 +337,16 @@ def viterbi(Y_start, Y_pred):
     vit = numpy.empty([N,T])
     BP = numpy.empty([N,T]) 
     vit[0] = Y_start
-    for n in range(1,N):
+    for i in range(1,N):
         for t in range(T):
             X = numpy.empty(T)
             for tag in range(T):
-                X[tag] = vit[n-1][tag] + Y_pred[n-1][tag][t]
-            vit[n][t] = numpy.max(X)
-            BP[n][t] = int(numpy.argmax(X))
+                X[tag] = vit[i-1][tag] + Y_pred[i-1][tag][t]
+            vit[i][t] = numpy.max(X)
+            BP[i][t] = int(numpy.argmax(X))
     tag_set = []
     bp_temp = int(numpy.argmax(vit[N-1]))
-    for i in range(n):
+    for i in range(N):
         pos = N-i-1
         tag_set.append(bp_temp)
         bp_temp = int(BP[pos][bp_temp])
