@@ -361,10 +361,12 @@ def viterbi(Y_start, Y_pred):
 # Returns a list of lists of strings (tags)
 def predict(corpus_path, model, feature_dict, tag_dict):
     corpus = load_test_corpus(corpus_path)
-    reversed_dictionary = {value: key for (key, value) in tag_dict.items()}
+    reversed_dictionary =  {} 
     predictions = []
+    for tag,index in tag_dict.items():
+        reversed_dictionary[index] = tag
     for sentences in corpus:
-        result = get_predictions(sentences,model,feature_dict,reversed_dictionary)
+        result = get_predictions([sentences],model,feature_dict,reversed_dictionary)
         Y_start = result[0]
         Y_pred = result[1]
         temp = viterbi(Y_start,Y_pred)
